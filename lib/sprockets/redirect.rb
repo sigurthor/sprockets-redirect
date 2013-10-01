@@ -2,6 +2,7 @@ require 'rack'
 require 'rack/request'
 require 'rack/mime'
 require 'active_support/core_ext/class/attribute'
+require 'active_support/core_ext/object/blank'
 require 'yaml'
 
 module Sprockets
@@ -65,7 +66,7 @@ module Sprockets
     # Sends a redirect header back to browser
     def redirect_to_digest_version(env)
       url = URI(@request.url)
-      filename = @digests[@request.path.sub("#{@prefix}/", "")].digest_path
+      filename = @digests[@request.path.sub("#{@prefix}/", "")]
       url.path = "#{@prefix}/#{filename}"
       headers = { 'Location'      => url.to_s,
                   'Content-Type'  => Rack::Mime.mime_type(::File.extname(filename)),
