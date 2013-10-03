@@ -36,7 +36,7 @@ module Sprockets
 
     # Set the status code use for redirection
     class_attribute :redirect_status
-    self.redirect_status = 302
+    self.redirect_status = 200
 
     def initialize(app, options = {})
       @app = app
@@ -60,19 +60,21 @@ module Sprockets
     # This will returns true if a requested path is matched in the digests hash
     def asset_match?(env)
       @request = Rack::Request.new(env)
-      @request.path.match(/^#{@prefix}/) && @digests[@request.path.sub(/^#{@prefix}\//, "")]
+      @request.path.match(/^#{@prefix}/) && @digests[@request.path.sub(/^#{@prefix}\//, '')]
     end
 
     # Sends a redirect header back to browser
     def redirect_to_digest_version(env)
       url = URI(@request.url)
-      filename = @digests[@request.path.sub("#{@prefix}/", "")]
-      url.path = "#{@prefix}/#{filename}"
-      headers = { 'Location'      => url.to_s,
+      filename = @request.path.sub("#{@prefix}/", '')
+      file = @digests[filename]
+      puts "#{url.to_s} ext #{Rack::Mime.mime_type(::File.extname('application.js'))} "
+      #url.path = "#{@prefix}/#{filename}"
+      headers = { #'Location'      => 'http://www.mbl.is',
                   'Content-Type'  => Rack::Mime.mime_type(::File.extname(filename)),
                   'Pragma'        => 'no-cache',
                   'Cache-Control' => 'no-cache; max-age=0' }
-      [self.class.redirect_status, headers, [redirect_message(url.to_s)]]
+      [200, headers, [file.to_s]]
     end
 
     # Create a default redirect message

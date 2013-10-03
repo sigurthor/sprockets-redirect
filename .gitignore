@@ -7,3 +7,7 @@ pkg
 *.rbc
 Gemfile.lock
 gemfiles/*.lock
+
+/.DS_Store
+/.idea/
+/lib/.DS_Store
